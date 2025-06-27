@@ -24,9 +24,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
-        # Serve index.html for the root path
+        # Serve app.html for the root path (the working interface)
         if self.path == '/':
-            self.path = '/index.html'
+            self.path = '/app.html'
         return super().do_GET()
 
 def start_http_server(port=8000):
