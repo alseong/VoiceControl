@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GarageBand Voice Controller - Try It Now</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+            border-radius: 2px;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(78, 205, 196, 0.5)); }
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .demo-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .demo-interface {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+
+        .status-bar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-offline {
+            color: #ff6b6b;
+        }
+
+        .mic-demo {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .mic-button-demo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            color: white;
+            font-size: 2.5rem;
+            cursor: not-allowed;
+            opacity: 0.6;
+            margin-bottom: 20px;
+        }
+
+        .setup-steps {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 GarageBand Voice Controller</h1>
+            <p>Next-generation voice control for music production</p>
+            <div class="version-badge">v2.0 Beta</div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-panel">
+                <h2 style="margin-bottom: 20px;">🚀 Try the Interface</h2>
+                <p style="opacity: 0.8; margin-bottom: 20px;">This is a preview of the actual interface. To control GarageBand, download and run the backend locally.</p>
+                
+                <div class="demo-interface">
+                    <div class="status-bar">
+                        <div style="width: 12px; height: 12px; background: #ff6b6b; border-radius: 50%;"></div>
+                        <span class="status-offline">Backend not running (demo mode)</span>
+                    </div>
+                    <div class="mic-demo">
+                        <button class="mic-button-demo">🎤</button>
+                        <div style="font-size: 0.9rem; opacity: 0.6;">Click download to enable voice control</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-panel">
+                <h2 style="margin-bottom: 20px;">📦 Download & Setup</h2>
+                <p style="opacity: 0.8; margin-bottom: 15px;">Ready to control GarageBand with your voice? Download the backend and follow the simple setup.</p>
+                
+                <div style="background: rgba(255, 217, 61, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <strong style="color: #ffd93d;">⚠️ Requirements:</strong>
+                    <ul style="margin-top: 10px; padding-left: 20px; font-size: 0.9rem;">
+                        <li>macOS (required for GarageBand)</li>
+                        <li>Python 3.9+</li>
+                        <li>GarageBand installed</li>
+                    </ul>
+                </div>
+
+                <a href="https://github.com/yourusername/garageband-voice-controller/archive/main.zip" class="download-btn">
+                    💾 Download for macOS
+                </a>
+                
+                <div style="margin-top: 15px; font-size: 0.85rem; opacity: 0.7;">
+                    Or clone: <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">git clone https://github.com/yourusername/garageband-voice-controller.git</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="setup-steps">
+            <h2 style="margin-bottom: 25px; text-align: center;">🛠️ Quick Setup (2 minutes)</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <h4>Download & Extract</h4>
+                    <p style="opacity: 0.8; margin-top: 5px;">Download the files and extract to your desired folder</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <h4>Run Setup Script</h4>
+                    <p style="opacity: 0.8; margin-top: 5px;">Open Terminal and run: <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">./setup.sh</code></p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <h4>Start the App</h4>
+                    <p style="opacity: 0.8; margin-top: 5px;">Run: <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">python3 start_servers.py</code></p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div>
+                    <h4>Open Browser</h4>
+                    <p style="opacity: 0.8; margin-top: 5px;">Goes to http://localhost:8000 automatically, grant mic permissions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🎤</div>
+                <h4>Voice Control</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">Speak commands naturally</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌐</div>
+                <h4>Modern Web UI</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">Beautiful startup-style interface</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h4>Continuous Listening</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">No need to click repeatedly</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h4>80+ Commands</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">Complete GarageBand control</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px; padding: 30px; background: rgba(255, 255, 255, 0.03); border-radius: 16px;">
+            <h3 style="margin-bottom: 15px;">🤝 Open Source</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">Built with modern web technologies. MIT licensed.</p>
+            <a href="https://github.com/yourusername/garageband-voice-controller" style="color: #4ecdc4; text-decoration: none;">
+                View on GitHub →
+            </a>
+        </div>
+    </div>
+</body>
+</html> 
